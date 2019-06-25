@@ -1,0 +1,29 @@
+digraph G {
+node [shape=box];
+"base_link" [label="base_link"];
+"link_00" [label="link_00"];
+"link_01" [label="link_01"];
+"link_02" [label="link_02"];
+"link_05" [label="link_05"];
+"link_06" [label="link_06"];
+"link_07" [label="link_07"];
+"link_03" [label="link_03"];
+"link_04" [label="link_04"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"base_link" -> "base_link__link_00" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"base_link__link_00" -> "link_00"
+"link_00" -> "link_00__link_01" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"link_00__link_01" -> "link_01"
+"link_01" -> "link_01__link_02" [label="xyz: 0 0 0 \nrpy: 0 0 -0.7853"]
+"link_01__link_02" -> "link_02"
+"link_02" -> "link_02__link_05" [label="xyz: 0.5 0 0 \nrpy: 0 -0 0"]
+"link_02__link_05" -> "link_05"
+"link_05" -> "link_05__link_06" [label="xyz: 0 0.5 0 \nrpy: 0 0 -0.78"]
+"link_05__link_06" -> "link_06"
+"link_06" -> "link_06__link_07" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"link_06__link_07" -> "link_07"
+"link_01" -> "link_01__link_03" [label="xyz: 0 0 0 \nrpy: 0 0 -0.7853"]
+"link_01__link_03" -> "link_03"
+"link_03" -> "link_03__link_04" [label="xyz: 0 0.5 0 \nrpy: 0 -0 0"]
+"link_03__link_04" -> "link_04"
+}

@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<robot name="artist" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- MACROS -->
+  <xacro:macro name="m_joint" params="name type axis_xyz origin_rpy origin_xyz parent child limit_e limit_l limit_u limit_v">
+      <joint name="${name}" type="${type}">
+        <axis xyz="${axis_xyz}" />
+        <limit effort="${limit_e}" lower="${limit_l}" upper="${limit_u}" velocity="${limit_v}" />
+        <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+        <parent link="${parent}" />
+        <child link="${child}" />
+      </joint>
+      <transmission name="trans_${name}">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${name}">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="motor_${name}">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+      </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="m_link_cylinder" params="name origin_xyz origin_rpy radius length mass ixx ixy ixz iyy iyz izz">
+      <link name="${name}">
+        <inertial>
+          <mass value="${mass}" />
+          <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+          <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}" />
+        </inertial>
+        <collision>
+          <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+          <geometry>
+            <cylinder radius="${radius}" length="${length}" />
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+          <geometry>
+            <cylinder radius="${radius}" length="${length}" />
+          </geometry>
+        </visual>
+      </link>
+    </xacro:macro>
+
+    <xacro:macro name="m_link_box" params="name origin_xyz origin_rpy size mass ixx ixy ixz iyy iyz izz">
+      <link name="${name}">
+        <inertial>
+          <mass value="${mass}" />
+          <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+          <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}" />
+        </inertial>
+        <collision>
+          <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+          <geometry>
+            <box size="${size}" />
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="${origin_rpy}" xyz="${origin_xyz}" />
+          <geometry>
+            <box size="${size}" />
+          </geometry>
+        </visual>
+      </link>
+    </xacro:macro>
+
+  <!--END OF MACROS-->
+
+
+  <m_link_box name= "base_link"
+    origin_xyz= "0 0 0" origin_rpy="0 0 0"
+    mass="1024"
+      ixx="170.667" ixy="0" ixz="0"
+      iyy="170.667" iyz="0"
+      izz="170.667"
+    size= "0.1 0.5 0.5" />
+
+  <m_joint  name= "base_link__link_00" type= "revolute"
+    axis_xyz = "0 0 1"
+    origin_rpy= "0 0 0" origin_xyz= "0 0 0"
+    parent = "base_link" child = "link_00"
+    limit_e="1000" limit_l="-0.78" limit_u="0.78" limit_v="0.5"/>
+
+  <m_link_cylinder name = "link_00"
+    origin_xyz= "0 0 0" origin_rpy= " 0 0 0"
+    radius= "0.05" length= "0.1"
+    mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655" />
+
+  <m_joint name= "link_00__link_01" type="revolute"
+    axis_xyz = "0 1 0"
+    origin_rpy= "0 0 0" origin_xyz= "0 0 0"
+    parent = "link_00" child = "link_01"
+    limit_e="1000" limit_l="-1.57079" limit_u="1.57079" limit_v="0.5"/>
+
+  <m_link_cylinder name= "link_01"
+    origin_xyz= "0 0 0" origin_rpy= " 1.57079 0 0"
+    radius= "0.05" length= "0.1"
+    mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655" />
+
+  <m_joint name= "link_01__link_02" type="revolute"
+    axis_xyz = "0 0 1"
+    origin_rpy= "0 0 -0.7853" origin_xyz= "0 0 0"
+    parent = "link_01" child = "link_02"
+
+    limit_e="1000" limit_l="-0.74" limit_u="0.74" limit_v="0.5"   />
+
+  <m_link_cylinder name= "link_02"
+    origin_xyz= "0.25 0 0" origin_rpy= "0 -1.57079 0"
+    radius = "0.02" length= "0.5"
+    mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655" />
+
+  <joint name="link_01__link_03" type="revolute">
+    <parent link="link_01"/>
+    <child link="link_03"/>
+    <origin xyz="0 0 0" rpy="0 0 -0.7853" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="0.5293" velocity="0.5" />
+    <mimic joint="link_01__link_02" multiplier="-1" offset="0" />
+  </joint>
+
+  <m_link_cylinder name= "link_03"
+    origin_xyz= "0 0.25 0" origin_rpy= "1.57079 0 0"
+    radius = "0.02" length= "0.5"
+    mass="57.906"
+              ixx="12.679" ixy="0" ixz="0"
+              iyy="12.679" iyz="0"
+              izz="0.651" />
+
+  <joint name="link_03__link_04" type="revolute">
+    <parent link="link_03"/>
+    <child link="link_04"/>
+    <origin xyz="0 0.5 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="0.5293" velocity="0.5" />
+    <mimic joint="link_01__link_02" multiplier="2" offset="0" />
+  </joint>
+
+  <m_link_cylinder name= "link_04"
+    origin_xyz= "0.25 0 0" origin_rpy= "0 -1.57079 0"
+    radius = "0.02" length= "0.5"
+    mass="57.906"
+              ixx="12.679" ixy="0" ixz="0"
+              iyy="12.679" iyz="0"
+              izz="0.651"/>
+
+  <joint name="link_02__link_05" type="revolute">
+    <parent link="link_02"/>
+    <child link="link_05"/>
+    <origin xyz="0.5 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="0.5293" velocity="0.5" />
+    <mimic joint="link_01__link_02" multiplier="-2" offset="0" />
+  </joint>
+
+  <m_link_cylinder name= "link_05"
+    origin_xyz= "0 0.25 0" origin_rpy= "1.57 0 0"
+    radius = "0.02" length= "0.5"
+    mass="57.906"
+              ixx="12.679" ixy="0" ixz="0"
+              iyy="12.679" iyz="0"
+              izz="0.651"/>
+
+  <joint name="link_05__link_06" type="revolute">
+    <parent link="link_05"/>
+    <child link="link_06"/>
+    <origin xyz="0 0.5 0" rpy="0 0 -0.78" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.57" upper="1.57" effort="0.5293" velocity="0.5" />
+    <mimic joint="link_01__link_02" multiplier="1" offset="0" />
+  </joint>
+  <m_link_cylinder name= "link_06"
+    origin_xyz= "0 0.125 0" origin_rpy= "1.57 0 0"
+    radius = "0.02" length= "0.25"
+    mass="57.906"
+              ixx="12.679" ixy="0" ixz="0"
+              iyy="12.679" iyz="0"
+              izz="0.651"/>
+
+  <m_joint name = "link_06__link_07" type= "revolute"
+    axis_xyz = "0 1 0"
+    origin_rpy= "0 0 0" origin_xyz= "0 0 0"
+    parent = "link_06" child = "link_07"
+    limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5"   />
+
+  <m_link_cylinder name = "link_07"
+    origin_xyz= "0 0.25 0" origin_rpy= "0 0 0"
+    radius = "0.1" length= "0.01"
+    mass="57.906"
+              ixx="12.679" ixy="0" ixz="0"
+              iyy="12.679" iyz="0"
+              izz="0.651"/>
+
+
+  <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      </plugin>
+    </gazebo>
+</robot>
